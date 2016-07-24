@@ -77,8 +77,8 @@ void setup ( void ) {
   server.on ( "/red", []() {colorWipe(strip.Color(255, 0, 0), 50); strip.show(); rainbow = false; handleRoot();} );
   server.on ( "/green", []() {colorWipe(strip.Color(0, 255, 0), 50); strip.show(); rainbow = false; handleRoot();} );
   server.on ( "/blue", []() {colorWipe(strip.Color(0, 0, 255), 50); strip.show(); rainbow = false; handleRoot();} );
-  server.on ( "/black", []() {colorWipe(strip.Color(0, 0, 0), 50); strip.show(); handleRoot();} );
-  server.on ( "/yellow", []() {colorWipe(strip.Color(127, 127, 0), 50); strip.show(); handleRoot();} );
+  server.on ( "/black", []() {colorWipe(strip.Color(0, 0, 0), 50); strip.show(); rainbow = false; handleRoot();} );
+  server.on ( "/yellow", []() {colorWipe(strip.Color(127, 127, 0), 50); strip.show(); rainbow = false; handleRoot();} );
   server.on ( "/rainbow", []() {rainbow = true; handleRoot(); rainbowCycle(200); handleRoot();} );
     server.onNotFound ( handleNotFound );
     server.begin();
