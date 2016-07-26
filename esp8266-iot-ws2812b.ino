@@ -4,13 +4,16 @@
 #include <ESP8266mDNS.h>
 #include <NeoPixelBus.h>
 #include <Adafruit_NeoPixel.h>
-#define pixelCount 1
+#define pixelCount 59
 #define pixelPin 5
 //NeoPixelBus<NeoGrbFeature, NeoEsp8266BitBang400KbpsMethod> strip(pixelCount, pixelPin);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(pixelCount, pixelPin, NEO_GRB + NEO_KHZ800);
 //NeoPixelBus strip = NeoPixelBus(pixelCount, 4, NEO_GRB);
 
 bool rainbow = false;
+bool loops = false;
+bool theater = false;
+
 const char *ssid = "ESP-net";
 const char *password = "35p-r0cks-iot";
 
@@ -19,16 +22,28 @@ ESP8266WebServer server ( 80 );
 const int led = 13;
 void handleRoot() {
     digitalWrite ( led, 1 );
-  String out = "<html><head><title>Wifi light</title></head>";
-  out += "<body style='background-color:gray'>";
-  out += "<span style='display:block; width:100%; font-size:2em; font-family:Verdana; text-align:center'>Choose color</span><br/>";
-  out += "<a href='white'><span style='display:block; text-align:center; background-color:white; width:100%; height:2em;'>WHITE</span></a><br/>";
-  out += "<a href='red'><span style='display:block; text-align:center; background-color:red; width:100%; height:2em;'>RED</span></a><br/>";
-  out += "<a href='green'><span style='display:block; text-align:center; background-color:green; width:100%; height:2em;'>GREEN</span></a><br/>";
-  out += "<a href='blue'><span style='display:block; text-align:center; background-color:blue; width:100%; height:2em;'>BLUE</span></a><br/>";
-  out += "<a href='black'><span style='display:block; text-align:center; text-color:white; background-color:black; width:100%; height:2em;'>OFF</span></a><br/>";
-  out += "<a href='yellow'><span style='display:block; text-align:center; background-color:yellow; width:100%; height:2em;'>YELLOW</span></a><br/>";
-  out += "<a href='rainbow'><span style='display:block; text-align:center; background-color:white; width:100%; height:2em;'>RAINBOW</span></a>";
+  String out = "<html><head><title>OcknigmaLabs Wifi light</title></head>";
+  out += "<body style='background-color:#323232'>";
+  out += "<span style='display:block; width:100%; font-size:2em; font-family:Verdana; color:white; text-align:center'>Choose color</span><br/>";
+  out += "<div id='colors' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
+  out += "<a href='white'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:white; width:21%; height:4em;'>WHITE</span></a>";
+  out += "<a href='red'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:red; width:21%; height:4em;'>RED</span></a>";
+  out += "<a href='green'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:green; width:21%; height:4em;'>GREEN</span></a><br/>";
+  out += "</div>";
+  out += "<div id='colors' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
+  out += "<a href='blue'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:blue; width:21%; height:4em;'>BLUE</span></a>";
+  out += "<a href='pink'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#f100f1; width:21%; height:4em;'>PINK</span></a>";   
+  out += "<a href='yellow'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:yellow; width:21%; height:4em;'>YELLOW</span></a><br/>";
+  out += "</div>";  
+  out += "<div id='effect' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
+  out += "<a href='looper'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#f1f1f1; width:21%; height:4em;'>ColorLoop</span></a>";
+  out += "<a href='chaser'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#e9e9e9; width:21%; height:4em;'>ColorChaser</span></a>";
+  out += "<a href='rainbow'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#f1f1f1; width:21%; height:4em;'>RAINBOW</span></a>";
+  out += "</div>";  
+  out += "<div id='off' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
+  out += "<a href='black'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:white; background-color:black; width:99%; height:5em;'>OFF</span></a><br/>";
+  out += "<span style='display:block; padding: 1% 6%; margin:auto; text-align:center;'>OcknigmaLabs-2016 # Sourcecode: <a href='#'>https://github.com/darthm0e/esp8266-witty</a></span>";
+  out += "</div>";
   out += "</body>";
   out += "</html>";
     server.send ( 200, "text/html", out );
@@ -73,13 +88,16 @@ void setup ( void ) {
         Serial.println ( "MDNS responder started" );
     }
     server.on ( "/", []() {handleRoot();} );
-  server.on ( "/white", []() {colorWipe(strip.Color(127, 127, 127), 50); strip.show(); rainbow = false; handleRoot();} );
-  server.on ( "/red", []() {colorWipe(strip.Color(255, 0, 0), 50); strip.show(); rainbow = false; handleRoot();} );
-  server.on ( "/green", []() {colorWipe(strip.Color(0, 255, 0), 50); strip.show(); rainbow = false; handleRoot();} );
-  server.on ( "/blue", []() {colorWipe(strip.Color(0, 0, 255), 50); strip.show(); rainbow = false; handleRoot();} );
-  server.on ( "/black", []() {colorWipe(strip.Color(0, 0, 0), 50); strip.show(); rainbow = false; handleRoot();} );
-  server.on ( "/yellow", []() {colorWipe(strip.Color(127, 127, 0), 50); strip.show(); rainbow = false; handleRoot();} );
-  server.on ( "/rainbow", []() {rainbow = true; handleRoot(); rainbowCycle(200); handleRoot();} );
+  server.on ( "/white", []() {colorWipe(strip.Color(127, 127, 127), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
+  server.on ( "/red", []() {colorWipe(strip.Color(255, 0, 0), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
+  server.on ( "/green", []() {colorWipe(strip.Color(0, 255, 0), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
+  server.on ( "/blue", []() {colorWipe(strip.Color(0, 0, 255), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
+  server.on ( "/pink", []() {colorWipe(strip.Color(200, 0, 200), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
+  server.on ( "/black", []() {colorWipe(strip.Color(0, 0, 0), 10); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
+  server.on ( "/yellow", []() {colorWipe(strip.Color(200, 200, 0), 20); theater = false; loops = false; rainbow = false; strip.show(); handleRoot();} );
+  server.on ( "/rainbow", []() {rainbow = true; theater = false; loops = false; handleRoot(); rainbowCycle(200); handleRoot();} );
+  server.on ( "/chaser", []() {loops = false; theater = true; rainbow = false; handleRoot(); theaterChaseRainbow(1000); handleRoot();} );
+  server.on ( "/looper", []() {theater = false; loops = true; rainbow = false; handleRoot(); looper(6000); handleRoot();} );
     server.onNotFound ( handleNotFound );
     server.begin();
     Serial.println ( "HTTP server started" );
@@ -97,9 +115,60 @@ void colorWipe(uint32_t c, uint8_t wait) {
   }
 }
 
+void looper(uint8_t wait) {
+       while ( loops == true ) {
+        theater = false;
+        rainbow = false;
+          colorWipe(strip.Color(127, 0, 0), 20);
+          delay(100);
+          colorWipe(strip.Color(0, 0, 0), 15);
+          server.handleClient();
+          if (loops == false) {
+            break;
+          }
+          colorWipe(strip.Color(0, 127, 0), 20);
+          delay(100);
+          colorWipe(strip.Color(0, 0, 0), 15);
+          server.handleClient();
+          if (loops == false) {
+            break;
+          }
+          colorWipe(strip.Color(0, 0, 127), 20);
+          delay(100);
+          colorWipe(strip.Color(0, 0, 0), 15);
+          server.handleClient();
+          if (loops == false) {
+            break;
+          }
+          colorWipe(strip.Color(127, 127, 0), 20);
+          delay(100);
+          colorWipe(strip.Color(0, 0, 0), 15);
+          server.handleClient();
+          if (loops == false) {
+            break;
+          }
+          colorWipe(strip.Color(127, 0, 127), 20);
+          delay(100);
+          colorWipe(strip.Color(0, 0, 0), 15);
+          server.handleClient();
+          if (loops == false) {
+            break;
+          }
+          colorWipe(strip.Color(0, 127, 127), 20);
+          delay(100);
+          colorWipe(strip.Color(0, 0, 0), 15);
+          server.handleClient();
+          if (loops == false) {
+            break;
+          }
+      }
+  }
+
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
+  theater = false;
+  loops = false;
   do
   {
     for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
@@ -123,6 +192,27 @@ void rainbowCycle(uint8_t wait) {
     delay(500);
   } while ( rainbow == true );
    Serial.println ( "rainbow end" );
+}
+//Theatre-style crawling lights with rainbow effect
+void theaterChaseRainbow(uint8_t wait) {
+  while (theater == true)  {   
+  for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
+    for (int q=0; q < 3; q++) {
+      for (int i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on            
+      }
+      strip.show();      
+      delay(wait);
+      for (int i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, 0);        //turn every third pixel off
+      }
+      server.handleClient();      
+    } 
+    if (theater == false){
+      break;   
+    }
+  }
+  }
 }
 
 // Input a value 0 to 255 to get a color value.
