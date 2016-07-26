@@ -25,25 +25,25 @@ void handleRoot() {
     digitalWrite ( led, 1 );
   String out = "<html><head><title>OcknigmaLabs Wifi light</title></head>";
   out += "<body style='background-color:#323232'>";
-  out += "<span style='display:block; width:100%; font-size:2em; font-family:Verdana; color:white; text-align:center'>Choose color</span><br/>";
-  out += "<div id='colors' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
+  out += "<span style='display:block; width:100%; font-size:1.5em; font-family:Verdana; color:white; text-align:center'>OcknigmaLabs Wifi light</span><br/>";
+  out += "<div id='colors' style='padding: 0% 0%; display:block; margin:auto; position:relative;'>";
   out += "<a href='white'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:white; width:21%; height:4em;'>WHITE</span></a>";
   out += "<a href='red'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:red; width:21%; height:4em;'>RED</span></a>";
   out += "<a href='green'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:green; width:21%; height:4em;'>GREEN</span></a><br/>";
   out += "</div>";
-  out += "<div id='colors' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
+  out += "<div id='colors' style='padding: 1% 0%; display:block; margin:auto; position:relative;'>";
   out += "<a href='blue'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:blue; width:21%; height:4em;'>BLUE</span></a>";
   out += "<a href='pink'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#f100f1; width:21%; height:4em;'>PINK</span></a>";   
   out += "<a href='yellow'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:yellow; width:21%; height:4em;'>YELLOW</span></a><br/>";
   out += "</div>";  
-  out += "<div id='effect' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
+  out += "<div id='effect' style='padding: 0% 0%; display:block; margin:auto; position:relative;'>";
   out += "<a href='looper'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#f1f1f1; width:21%; height:4em;'>ColorLoop</span></a>";
   out += "<a href='chaser'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#e9e9e9; width:21%; height:4em;'>ColorChaser</span></a>";
   out += "<a href='rainbow'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#f1f1f1; width:21%; height:4em;'>RAINBOW</span></a>";
   out += "</div>";  
-  out += "<div id='off' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
-  out += "<a href='black'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:white; background-color:black; width:87%; height:5em;'>OFF</span></a><br/>";
-  out += "<a href='fader'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:white; background-color:white; width:87%; height:5em;'>OFF</span></a><br/>";
+  out += "<div id='off' style='padding: 1% 0%; display:block; margin:auto; position:relative;'>";
+  out += "<a href='fader'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:black; background-color:white; width:87%; height:4em;'>FADER</span></a><br/>";
+  out += "<a href='black'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:white; background-color:black; width:87%; height:4em;'>OFF / FADER OFF</span></a><br/>";
   out += "</div>";
   out += "<span style='display:block; padding: 1% 6%; margin:auto; color: white; text-align:center;'>OcknigmaLabs-2016 # Sourcecode: <a href='#'>https://github.com/darthm0e/esp8266-witty</a></span>";
   out += "</body>";
@@ -135,7 +135,7 @@ void fader(uint8_t wait) {
       strip.setBrightness(i);
   }
   server.handleClient();
-  delay(wait);
+  delay(wait*2);
   }  
 }
 
