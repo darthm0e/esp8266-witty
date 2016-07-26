@@ -13,6 +13,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(pixelCount, pixelPin, NEO_GRB + NEO_
 bool rainbow = false;
 bool loops = false;
 bool theater = false;
+bool faders = false;
 
 const char *ssid = "ESP-net";
 const char *password = "35p-r0cks-iot";
@@ -41,9 +42,10 @@ void handleRoot() {
   out += "<a href='rainbow'><span style='display:inline-table; padding: 1% 6%; margin:auto; text-align:center; background-color:#f1f1f1; width:21%; height:4em;'>RAINBOW</span></a>";
   out += "</div>";  
   out += "<div id='off' style='padding: 3% 0%; display:block; padding: 1% 1%; margin:auto; position:relative;'>";
-  out += "<a href='black'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:white; background-color:black; width:99%; height:5em;'>OFF</span></a><br/>";
-  out += "<span style='display:block; padding: 1% 6%; margin:auto; text-align:center;'>OcknigmaLabs-2016 # Sourcecode: <a href='#'>https://github.com/darthm0e/esp8266-witty</a></span>";
+  out += "<a href='black'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:white; background-color:black; width:87%; height:5em;'>OFF</span></a><br/>";
+  out += "<a href='fader'><span style='display:inline-table; padding: 2% 6%; text-align:center; color:white; background-color:white; width:87%; height:5em;'>OFF</span></a><br/>";
   out += "</div>";
+  out += "<span style='display:block; padding: 1% 6%; margin:auto; color: white; text-align:center;'>OcknigmaLabs-2016 # Sourcecode: <a href='#'>https://github.com/darthm0e/esp8266-witty</a></span>";
   out += "</body>";
   out += "</html>";
     server.send ( 200, "text/html", out );
@@ -93,11 +95,12 @@ void setup ( void ) {
   server.on ( "/green", []() {colorWipe(strip.Color(0, 255, 0), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
   server.on ( "/blue", []() {colorWipe(strip.Color(0, 0, 255), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
   server.on ( "/pink", []() {colorWipe(strip.Color(200, 0, 200), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
-  server.on ( "/black", []() {colorWipe(strip.Color(0, 0, 0), 10); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
+  server.on ( "/black", []() {colorWipe(strip.Color(0, 0, 0), 10); strip.setBrightness(255); strip.show(); rainbow = false; theater = false; faders = false; loops = false; handleRoot();} );
   server.on ( "/yellow", []() {colorWipe(strip.Color(200, 200, 0), 20); theater = false; loops = false; rainbow = false; strip.show(); handleRoot();} );
   server.on ( "/rainbow", []() {rainbow = true; theater = false; loops = false; handleRoot(); rainbowCycle(200); handleRoot();} );
-  server.on ( "/chaser", []() {loops = false; theater = true; rainbow = false; handleRoot(); theaterChaseRainbow(1000); handleRoot();} );
-  server.on ( "/looper", []() {theater = false; loops = true; rainbow = false; handleRoot(); looper(6000); handleRoot();} );
+  server.on ( "/chaser", []() {loops = false; theater = true; rainbow = false; faders = false; handleRoot(); theaterChaseRainbow(1000); handleRoot();} );
+  server.on ( "/looper", []() {theater = false; loops = true; rainbow = false; faders = false; handleRoot(); looper(6000); handleRoot();} );
+  server.on ( "/fader", []() {faders = true; rainbow = false; theater = false; loops = false; handleRoot(); fader(50);} );
     server.onNotFound ( handleNotFound );
     server.begin();
     Serial.println ( "HTTP server started" );
@@ -114,8 +117,30 @@ void colorWipe(uint32_t c, uint8_t wait) {
       delay(wait);
   }
 }
+//Fader Test
+void fader(uint8_t wait) {
+  while ( faders == true ) {
+  strip.Color(0, 0, 255);
+  strip.setBrightness(10);
+  strip.show();
+  
+  for(uint16_t i=10; i<255; i=i+10) {             
+      strip.show();
+      delay(wait);      
+      strip.setBrightness(i);
+  }
+  for(uint16_t i=255; i>0; i=i-15) {             
+      strip.show();
+      delay(wait);      
+      strip.setBrightness(i);
+  }
+  server.handleClient();
+  delay(wait);
+  }  
+}
 
 void looper(uint8_t wait) {
+      strip.setBrightness(255);
        while ( loops == true ) {
         theater = false;
         rainbow = false;
@@ -169,6 +194,7 @@ void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
   theater = false;
   loops = false;
+  strip.setBrightness(255);
   do
   {
     for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
@@ -195,6 +221,7 @@ void rainbowCycle(uint8_t wait) {
 }
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
+  strip.setBrightness(255);
   while (theater == true)  {   
   for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
     for (int q=0; q < 3; q++) {
