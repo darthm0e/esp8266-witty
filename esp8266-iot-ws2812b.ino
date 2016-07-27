@@ -15,6 +15,11 @@ bool loops = false;
 bool theater = false;
 bool faders = false;
 
+// wenn auskommentiert: delay()
+// wenn aktiv: deep sleep nutzen (Hardwaremodifikation notwendig)
+#define DEEP
+
+
 const char *ssid = "ESP-net";
 const char *password = "35p-r0cks-iot";
 
@@ -104,11 +109,11 @@ void setup ( void ) {
   server.on ( "/pink", []() {colorWipe(strip.Color(200, 0, 200), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
   server.on ( "/emerald", []() {colorWipe(strip.Color(0, 200, 200), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
   server.on ( "/yellow", []() {colorWipe(strip.Color(200, 200, 0), 20); theater = false; loops = false; rainbow = false; strip.show(); handleRoot();} );
-  server.on ( "/black", []() {colorWipe(strip.Color(0, 0, 0), 10); strip.setBrightness(255); strip.show(); delay(100); handleRoot(); colorWipe(strip.Color(0, 0, 0), 10); rainbow = false; theater = false; faders = false; loops = false; strip.show(); handleRoot();} );
+  server.on ( "/black", []() {lightoff(50); rainbow = false; theater = false; faders = false; loops = false; strip.show(); handleRoot();} );
   server.on ( "/rainbow", []() {rainbow = true; theater = false; loops = false; handleRoot(); rainbowCycle(200); handleRoot();} );
   server.on ( "/chaser", []() {loops = false; theater = true; rainbow = false; faders = false; handleRoot(); theaterChaseRainbow(1000); handleRoot();} );
   server.on ( "/looper", []() {theater = false; loops = true; rainbow = false; faders = false; handleRoot(); looper(6000); handleRoot();} );
-  server.on ( "/fader", []() {faders = true; rainbow = false; theater = false; loops = false; handleRoot(); fader(50);} );
+  server.on ( "/fader", []() {rainbow = false; theater = false; loops = false; handleRoot(); fader(50);} );
     server.onNotFound ( handleNotFound );
     server.begin();
     Serial.println ( "HTTP server started" );
@@ -125,13 +130,42 @@ void colorWipe(uint32_t c, uint8_t wait) {
       delay(wait);
   }
 }
+//LightsOff
+void lightoff(uint8_t wait) {
+  colorWipe(strip.Color(0, 0, 0), 10);
+  strip.setBrightness(255); 
+  delay(100);
+  for(uint16_t i=0; i<4; i++) {
+    delay(200);
+    server.handleClient();
+  }
+  strip.show();    
+  Serial.println ( "Lights off" );
+  #ifdef DEEP
+    Serial.println ( "Sleep" );
+    ESP.deepSleep(60000000, WAKE_RF_DEFAULT);
+    delay(100);
+  #else
+    //@todo disconnect WiFi to save power?
+    delay(1000 * wait);
+  #endif
+}
 //Fader Test
 void fader(uint8_t wait) {
-  while ( faders == true ) {
+  if (faders == true) {
+    faders=false;
+    Serial.println ( "fader off" );
+    strip.setBrightness(250);
+    strip.show();
+  }
+  else {
+    faders=true;
+    Serial.println ( "fader started" );
+  }
+  while ( faders == true ) {    
   strip.Color(0, 0, 255);
   strip.setBrightness(10);
-  strip.show();
-  
+  strip.show();  
   for(uint16_t i=10; i<255; i=i+15) {     
       delay(wait);      
       strip.setBrightness(i);
@@ -148,11 +182,13 @@ void fader(uint8_t wait) {
   }  
 }
 
+
 void looper(uint8_t wait) {
       strip.setBrightness(255);
        while ( loops == true ) {
         theater = false;
         rainbow = false;
+        Serial.println ( "looper started" );
           colorWipe(strip.Color(127, 0, 0), 20);
           delay(100);
           colorWipe(strip.Color(0, 0, 0), 15);
@@ -196,6 +232,7 @@ void looper(uint8_t wait) {
             break;
           }
       }
+      Serial.println ( "looper end" );
   }
 
 // Slightly different, this makes the rainbow equally distributed throughout
@@ -203,24 +240,21 @@ void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
   theater = false;
   loops = false;
+  Serial.println ( "rainbow started" );
   strip.setBrightness(255);
   do
   {
     for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
       for(i=0; i< strip.numPixels(); i++) {
         strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
-
-      }
-      
+      }      
       strip.show();
       server.handleClient();
       delay(wait);
       if (rainbow == false) {
         break;
       }
-    }
-    
-    Serial.println ( "LOOP");
+    }    
     delay(250);
     mdns.update();
     server.handleClient();
@@ -230,6 +264,7 @@ void rainbowCycle(uint8_t wait) {
 }
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
+  Serial.println ( "chaser started" );
   strip.setBrightness(255);
   while (theater == true)  {   
   for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
@@ -249,6 +284,7 @@ void theaterChaseRainbow(uint8_t wait) {
     }
   }
   }
+  Serial.println ( "chaser end" );
 }
 
 // Input a value 0 to 255 to get a color value.
