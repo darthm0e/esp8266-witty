@@ -20,8 +20,8 @@ bool faders = false;
 #define DEEP
 
 
-const char *ssid = "ESP-net";
-const char *password = "35p-r0cks-iot";
+const char *ssid = "ESP-net"; //wlan ssid
+const char *password = ""; //wlan password
 
 // Update these with values suitable for your network.
 IPAddress ip(192,168,2,242);  //Node static IP
