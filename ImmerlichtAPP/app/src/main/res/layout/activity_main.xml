@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="de.labs.ocknigma.immerlichtapp.MainActivity"
+    android:background="#272727">
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:text="OcknigmaLabs Immerlicht"
+    android:id="@+id/textView"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:textColor="#ffffff" />
+
+<TableLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:layout_below="@+id/textView"
+    android:layout_marginTop="30dp"
+    android:id="@+id/tableLayout"
+    android:layout_alignEnd="@+id/ip_address"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:layout_alignParentStart="true">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton android:id="@+id/imageButton"
+            android:layout_column="0"
+            android:layout_width="110dp"
+            android:layout_height="50dp"
+            android:backgroundTint="#ff0000"
+            android:onClick="callRed" />
+
+        <ImageButton
+            android:layout_width="110dp"
+            android:layout_height="50dp"
+            android:id="@+id/imageButton4"
+            android:layout_column="2"
+            android:backgroundTint="#ffff00"
+            android:onClick="callYellow" />
+
+        <Space
+            android:layout_width="30px"
+            android:layout_height="20px"
+            android:layout_column="4" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="ColorLoop"
+            android:id="@+id/button"
+            android:layout_column="5"
+            android:typeface="monospace"
+            android:textSize="11dp"
+            android:backgroundTint="#bfbfbf"
+            android:onClick="callLoop" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton android:id="@+id/imageButton2"
+            android:layout_column="0"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:backgroundTint="#00ff00"
+            android:onClick="callGreen" />
+
+        <ImageButton
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:id="@+id/imageButton5"
+            android:layout_column="2"
+            android:backgroundTint="#00ffff"
+            android:onClick="callCyan" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="ColorChaser"
+            android:id="@+id/button2"
+            android:layout_column="5"
+            android:textSize="11dp"
+            android:typeface="monospace"
+            android:backgroundTint="#bfbfbf"
+            android:onClick="callChaser" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton android:id="@+id/imageButton3"
+            android:layout_column="0"
+            android:layout_height="50dp"
+            android:layout_width="100dp"
+            android:backgroundTint="#0000ff"
+            android:onClick="callBlue" />
+
+        <ImageButton
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:id="@+id/imageButton6"
+            android:layout_column="2"
+            android:backgroundTint="#ff00ff"
+            android:onClick="callPink" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Rainbow"
+            android:id="@+id/button3"
+            android:layout_column="5"
+            android:typeface="monospace"
+            android:textSize="12dp"
+            android:backgroundTint="#bfbfbf"
+            android:onClick="callRainbow" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="White"
+            android:id="@+id/button4"
+            android:layout_column="0"
+            android:textSize="12dp"
+            android:typeface="monospace"
+            android:backgroundTint="#f8f8f8"
+            android:textColor="#323232"
+            android:onClick="callWhite" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="OFF"
+            android:id="@+id/button5"
+            android:layout_column="2"
+            android:typeface="monospace"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            android:onClick="callOff" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fader On/off"
+            android:id="@+id/button6"
+            android:layout_column="5"
+            android:textSize="10dp"
+            android:typeface="monospace"
+            android:onClick="callFader" />
+    </TableRow>
+</TableLayout>
+
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Shutdown"
+    android:id="@+id/button7"
+    android:layout_below="@+id/tableLayout"
+    android:layout_alignLeft="@+id/tableLayout"
+    android:layout_alignStart="@+id/tableLayout"
+    android:layout_marginTop="9dp"
+    android:layout_alignRight="@+id/tableLayout"
+    android:layout_alignEnd="@+id/tableLayout"
+    android:onClick="callShtdwn" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ip_address"
+        android:layout_marginTop="39dp"
+        android:layout_below="@+id/button7"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="#aaaaaa"
+        android:text="192.168.2.242"
+        android:textColor="#e6e6e6"
+        android:typeface="monospace" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="IP Address"
+        android:id="@+id/textView2"
+        android:textColor="#ffffff"
+        android:layout_below="@+id/ip_address"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="SAVE"
+        android:id="@+id/save"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_alignParentEnd="true"
+        android:textSize="10dp"
+        android:typeface="monospace"
+        android:onClick="save" />
+
+</RelativeLayout>
