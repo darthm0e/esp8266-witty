@@ -4,7 +4,7 @@
 #include <ESP8266mDNS.h>
 #include <NeoPixelBus.h>
 #include <Adafruit_NeoPixel.h>
-#define pixelCount 59
+#define pixelCount 15
 #define pixelPin 5
 //NeoPixelBus<NeoGrbFeature, NeoEsp8266BitBang400KbpsMethod> strip(pixelCount, pixelPin);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(pixelCount, pixelPin, NEO_GRB + NEO_KHZ800);
@@ -21,10 +21,10 @@ bool faders = false;
 
 
 const char *ssid = "ESP-net"; //wlan ssid
-const char *password = ""; //wlan password
+const char *password = "35p-r0cks-iot"; //wlan password
 
 // Update these with values suitable for your network.
-IPAddress ip(192,168,2,242);  //Node static IP
+IPAddress ip(192,168,2,244);  //Node static IP
 IPAddress gateway(192,168,2,112);
 IPAddress subnet(255,255,255,0);
 
@@ -109,7 +109,7 @@ void setup ( void ) {
   server.on ( "/pink", []() {colorWipe(strip.Color(200, 0, 200), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
   server.on ( "/emerald", []() {colorWipe(strip.Color(0, 200, 200), 20); strip.show(); rainbow = false; theater = false; loops = false; handleRoot();} );
   server.on ( "/yellow", []() {colorWipe(strip.Color(200, 200, 0), 20); theater = false; loops = false; rainbow = false; strip.show(); handleRoot();} );
-  server.on ( "/black", []() {lightoff(50); rainbow = false; theater = false; faders = false; loops = false; strip.show(); handleRoot();} );
+  server.on ( "/off", []() {lightoff(50); rainbow = false; theater = false; faders = false; loops = false; strip.show(); handleRoot();} );
   server.on ( "/rainbow", []() {rainbow = true; theater = false; loops = false; handleRoot(); rainbowCycle(200); handleRoot();} );
   server.on ( "/chaser", []() {loops = false; theater = true; rainbow = false; faders = false; handleRoot(); theaterChaseRainbow(1000); handleRoot();} );
   server.on ( "/looper", []() {theater = false; loops = true; rainbow = false; faders = false; handleRoot(); looper(6000); handleRoot();} );
